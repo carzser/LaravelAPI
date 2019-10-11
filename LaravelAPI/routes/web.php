@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'pageController@inicio')->name('inicio');
 
 Route::get('bienvenido', function() {
     return 'Hola!';
@@ -25,14 +23,18 @@ Route::get('bienvenido', function() {
 
 //Route::view('galeria','fotos',['numero' => 125]);
 
-Route::get('fotos', function(){
-    return view('fotos');
-})->name('foto');
+Route::get('fotos','pageController@fotos')->name('foto');
 
-Route::get('blog',function(){
-    return view('blog');
-})->name('noticias');
+Route::get('blog','pageController@noticias')->name('noticias');
 
+Route::get('nosotros/{nombre?}', 'pageController@nosotros')->name('nosotros');
 
+Route::get('/detalle/{id?}', 'pageController@detalle')->name('notas.detalle');
 
+Route::post('/', 'pageController@crear')->name('notas.crear');
 
+Route::get('editar/{id}', 'pageController@editar')->name('notas.editar');
+
+Route::put('editar/{id}', 'pageController@update')->name('notas.update');
+
+Route::delete('eliminar/{id}', 'pageController@eliminar')->name('notas.eliminar');

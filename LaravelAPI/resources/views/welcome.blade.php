@@ -1,100 +1,80 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('plantilla')
 
-        <title>Bienvenido</title>
+@section('seccion')
+ 
+<h1 class="display-4">Notas</h1>
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+@if(session('mensaje'))
+    <div class="alert alert-success">
+        {{session('mensaje')}}
+    </div>
+@endif
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
 
-            .full-height {
-                height: 100vh;
-            }
+<form action="{{route('notas.crear')}}" method="POST">
+@csrf
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
+@error('nombre')
 
-            .position-ref {
-                position: relative;
-            }
+<div class="alert alert-danger">
+    El nombre es obligatorio
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
+@enderror
 
-            .content {
-                text-align: center;
-            }
+@error('descripcion')
 
-            .title {
-                font-size: 84px;
-            }
+<div class="alert alert-danger">
+    La descripcion es obligatoria
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
+@enderror
 
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
+<input type="text" name="nombre" placeholder="Nombre" class = "form-control mb-2" value="{{old('nombre')}}">
+<input type="text" name="descripcion" placeholder="Descripcion" class = "form-control mb-2" value="{{old('descrpcion')}}">
+<button class="btn btn-primary btn-block" type="submit">Agregar</button>
+</form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach($notas as $item)
+            <tr>
+                <th scope="row">{{$item->id}}</th>
+                <td>
+                <a href="{{route('notas.detalle',$item)}}">
+                {{$item->nombre}}
+                </a>
+                </td>
+                <td>{{$item->descripcion}}</td>
+                <td>
+                <a href="{{route('notas.editar',$item)}}" class= "btn btn-warning btn-sm">Editar</a>
+                
+                <form action="{{route('notas.eliminar',$item)}}" method="POST" class="d-inline">
+                @method('DELETE')
+                @csrf
+                <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
+                </form>
+                
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+    
 
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://vapor.laravel.com">Vapor</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+    {{ $notas-> links()}}
+@endsection
